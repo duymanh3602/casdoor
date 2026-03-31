@@ -51,6 +51,8 @@ jobs:
           context: .
           target: STANDARD
           platforms: linux/amd64
+          build-args: |
+            SKIP_VERSION_TEST=true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

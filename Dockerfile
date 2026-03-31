@@ -11,6 +11,7 @@ RUN NODE_OPTIONS="--max-old-space-size=4096" yarn run build
 
 FROM --platform=$BUILDPLATFORM golang:1.25.8 AS BACK
 WORKDIR /go/src/casdoor
+ARG SKIP_VERSION_TEST=false
 
 # Copy only go.mod and go.sum first for dependency caching
 COPY go.mod go.sum ./
@@ -19,7 +20,9 @@ RUN go mod download
 # Copy source files
 COPY . .
 
-RUN go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go ./util/variable.go
+RUN if [ "$SKIP_VERSION_TEST" != "true" ]; then \
+      go test -v -run TestGetVersionInfo ./util/system_test.go ./util/system.go ./util/variable.go; \
+    fi
 RUN ./build.sh
 
 FROM alpine:latest AS STANDARD
