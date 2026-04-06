@@ -1292,6 +1292,29 @@ func DeleteGroupForUser(user string, group string) (bool, error) {
 	return userEnforcer.DeleteGroupForUser(user, group)
 }
 
+func AddGroupForUser(user string, group string) (bool, error) {
+	userObj, err := GetUser(user)
+	if err != nil {
+		return false, err
+	}
+
+	if userObj == nil {
+		return false, fmt.Errorf("the user: %s is not found", user)
+	}
+
+	if util.InSlice(userObj.Groups, group) {
+		return false, fmt.Errorf("the user: %s is already in the group: %s", user, group)
+	}
+
+	userObj.Groups = append(userObj.Groups, group)
+	_, err = updateUser(user, userObj, []string{"groups"})
+	if err != nil {
+		return false, err
+	}
+
+	return userEnforcer.AddGroupForUser(user, group)
+}
+
 func userChangeTrigger(oldName string, newName string) error {
 	session := ormer.Engine.NewSession()
 	defer session.Close()

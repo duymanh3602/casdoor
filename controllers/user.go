@@ -755,6 +755,32 @@ func (c *ApiController) RemoveUserFromGroup() {
 	c.ResponseOk(affected)
 }
 
+func (c *ApiController) AddUserToGroup() {
+	owner := c.Ctx.Request.Form.Get("owner")
+	name := c.Ctx.Request.Form.Get("name")
+	groupName := c.Ctx.Request.Form.Get("groupName")
+
+	organization, err := object.GetOrganization(util.GetId("admin", owner))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+	item := object.GetAccountItemByName("Groups", organization)
+	res, msg := object.CheckAccountItemModifyRule(item, c.IsAdmin(), c.GetAcceptLanguage())
+	if !res {
+		c.ResponseError(msg)
+		return
+	}
+
+	affected, err := object.AddGroupForUser(util.GetId(owner, name), util.GetId(owner, groupName))
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	c.ResponseOk(affected)
+}
+
 // ImpersonateUser
 // @Title ImpersonateUser
 // @Tag User API

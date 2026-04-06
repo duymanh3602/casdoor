@@ -15,46 +15,74 @@
 import * as Setting from "../Setting";
 import i18next from "i18next";
 
-export function getGlobalUsers(page, pageSize, field = "", value = "", sortField = "", sortOrder = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
+export function getGlobalUsers(
+  page,
+  pageSize,
+  field = "",
+  value = "",
+  sortField = "",
+  sortOrder = ""
+) {
+  return fetch(
+    `${Setting.ServerUrl}/api/get-global-users?p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept-Language": Setting.getAcceptLanguage(),
+      },
+    }
+  ).then((res) => res.json());
 }
 
-export function getUsers(owner, page = "", pageSize = "", field = "", value = "", sortField = "", sortOrder = "", groupName = "") {
-  return fetch(`${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}&groupName=${groupName}`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
+export function getUsers(
+  owner,
+  page = "",
+  pageSize = "",
+  field = "",
+  value = "",
+  sortField = "",
+  sortOrder = "",
+  groupName = ""
+) {
+  return fetch(
+    `${Setting.ServerUrl}/api/get-users?owner=${owner}&p=${page}&pageSize=${pageSize}&field=${field}&value=${value}&sortField=${sortField}&sortOrder=${sortOrder}&groupName=${groupName}`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept-Language": Setting.getAcceptLanguage(),
+      },
+    }
+  ).then((res) => res.json());
 }
 
 export function getUser(owner, name) {
-  return fetch(`${Setting.ServerUrl}/api/get-user?id=${owner}/${encodeURIComponent(name)}`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
+  return fetch(
+    `${Setting.ServerUrl}/api/get-user?id=${owner}/${encodeURIComponent(name)}`,
+    {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept-Language": Setting.getAcceptLanguage(),
+      },
+    }
+  ).then((res) => res.json());
 }
 
 export function updateUser(owner, name, user) {
   const newUser = Setting.deepCopy(user);
-  return fetch(`${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}`, {
-    method: "POST",
-    credentials: "include",
-    body: JSON.stringify(newUser),
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json());
+  return fetch(
+    `${Setting.ServerUrl}/api/update-user?id=${owner}/${encodeURIComponent(name)}`,
+    {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(newUser),
+      headers: {
+        "Accept-Language": Setting.getAcceptLanguage(),
+      },
+    }
+  ).then((res) => res.json());
 }
 
 export function addUser(user) {
@@ -66,7 +94,7 @@ export function addUser(user) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
 export function deleteUser(user) {
@@ -78,22 +106,28 @@ export function deleteUser(user) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
 export function getAddressOptions(url) {
   return fetch(url, {
     method: "GET",
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
 export function getAffiliationOptions(url, code) {
   return fetch(`${url}/${code}`, {
     method: "GET",
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
-export function setPassword(userOwner, userName, oldPassword, newPassword, code = "") {
+export function setPassword(
+  userOwner,
+  userName,
+  oldPassword,
+  newPassword,
+  code = ""
+) {
   const formData = new FormData();
   formData.append("userOwner", userOwner);
   formData.append("userName", userName);
@@ -110,10 +144,20 @@ export function setPassword(userOwner, userName, oldPassword, newPassword, code 
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
-export function sendCode(captchaType, captchaToken, clientSecret, method, countryCode = "", dest, type, applicationId, checkUser = "") {
+export function sendCode(
+  captchaType,
+  captchaToken,
+  clientSecret,
+  method,
+  countryCode = "",
+  dest,
+  type,
+  applicationId,
+  checkUser = ""
+) {
   if (Setting.isValidEmail(dest) && type !== "email") {
     type = "email";
   }
@@ -135,18 +179,29 @@ export function sendCode(captchaType, captchaToken, clientSecret, method, countr
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json()).then(res => {
-    if (res.status === "ok") {
-      Setting.showMessage("success", i18next.t("user:Verification code sent"));
-      return true;
-    } else {
-      Setting.showMessage("error", res.msg);
-      return false;
-    }
-  });
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === "ok") {
+        Setting.showMessage(
+          "success",
+          i18next.t("user:Verification code sent")
+        );
+        return true;
+      } else {
+        Setting.showMessage("error", res.msg);
+        return false;
+      }
+    });
 }
 
-export function verifyCaptcha(owner, name, captchaType, captchaToken, clientSecret) {
+export function verifyCaptcha(
+  owner,
+  name,
+  captchaType,
+  captchaToken,
+  clientSecret
+) {
   const formData = new FormData();
   formData.append("captchaType", captchaType);
   formData.append("captchaToken", captchaToken);
@@ -159,19 +214,24 @@ export function verifyCaptcha(owner, name, captchaType, captchaToken, clientSecr
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json()).then(res => {
-    if (res.status === "ok") {
-      if (res.data) {
-        Setting.showMessage("success", i18next.t("user:Captcha Verify Success"));
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === "ok") {
+        if (res.data) {
+          Setting.showMessage(
+            "success",
+            i18next.t("user:Captcha Verify Success")
+          );
+        } else {
+          Setting.showMessage("error", i18next.t("user:Captcha Verify Failed"));
+        }
+        return true;
       } else {
-        Setting.showMessage("error", i18next.t("user:Captcha Verify Failed"));
+        Setting.showMessage("error", i18next.t("user:" + res.msg));
+        return false;
       }
-      return true;
-    } else {
-      Setting.showMessage("error", i18next.t("user:" + res.msg));
-      return false;
-    }
-  });
+    });
 }
 
 export function resetEmailOrPhone(dest, type, code) {
@@ -186,7 +246,7 @@ export function resetEmailOrPhone(dest, type, code) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
 export function impersonateUser(username) {
@@ -199,7 +259,7 @@ export function impersonateUser(username) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
 export function exitImpersonateUser() {
@@ -209,16 +269,21 @@ export function exitImpersonateUser() {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
 export function getCaptcha(owner, name, isCurrentProvider) {
-  return fetch(`${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}`, {
-    method: "GET",
-    headers: {
-      "Accept-Language": Setting.getAcceptLanguage(),
-    },
-  }).then(res => res.json()).then(res => res.data);
+  return fetch(
+    `${Setting.ServerUrl}/api/get-captcha?applicationId=${owner}/${encodeURIComponent(name)}&isCurrentProvider=${isCurrentProvider}`,
+    {
+      method: "GET",
+      headers: {
+        "Accept-Language": Setting.getAcceptLanguage(),
+      },
+    }
+  )
+    .then((res) => res.json())
+    .then((res) => res.data);
 }
 
 export function verifyCode(values) {
@@ -229,7 +294,7 @@ export function verifyCode(values) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
 export function checkUserPassword(values) {
@@ -237,7 +302,7 @@ export function checkUserPassword(values) {
     method: "POST",
     credentials: "include",
     body: JSON.stringify(values),
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
 
 export function removeUserFromGroup({owner, name, groupName}) {
@@ -252,7 +317,22 @@ export function removeUserFromGroup({owner, name, groupName}) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then((res) => res.json());
+}
+
+export function addUserToGroup({owner, name, groupName}) {
+  const formData = new FormData();
+  formData.append("owner", owner);
+  formData.append("name", name);
+  formData.append("groupName", groupName);
+  return fetch(`${Setting.ServerUrl}/api/add-user-to-group`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+    headers: {
+      "Accept-Language": Setting.getAcceptLanguage(),
+    },
+  }).then((res) => res.json());
 }
 
 export function verifyIdentification(owner, name, provider) {
@@ -278,5 +358,5 @@ export function verifyIdentification(owner, name, provider) {
     headers: {
       "Accept-Language": Setting.getAcceptLanguage(),
     },
-  }).then(res => res.json());
+  }).then((res) => res.json());
 }
